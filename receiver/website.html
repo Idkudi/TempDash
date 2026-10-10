@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #af4343;
+            
+        }
+        h1::before {
+            content: "";
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background-color: #af4343;
+            margin-right: 10px;
+            vertical-align: top
+        }
+        p {
+            line-height: 1.6;
+            color: #555;
+        }
+        hr {
+            border: none;
+            height: 1px;
+            background-color: #af4343;
+            margin: 20px 0;
+        }
+        hr.stripd {
+            background:repeating-linear-gradient(
+                to right,
+                #af4343,
+                #af4343 10px,
+                transparent 10px,
+                transparent 20px
+                
+            );
+
+
+        }
+        .loader {
+        width: 120px;
+        height: 20px;
+        -webkit-mask:linear-gradient(#000 70%,#0000 0) 0/25%;
+        background:
+        linear-gradient(#000000 0 0) 0/0% no-repeat
+        #ddd;
+        animation: l4 4s single-animation steps(100);
+        }
+        @keyframes l4 {
+            100% {background-size:120%}
+        }
+    </style>
+</head>
+<body>
+    <h1>TempDash</h1>
+    <hr class="stripd">
+    <p>TempDash is a simple web application that allows users to monitor and visualize temperature data in real-time. It provides an intuitive interface for users to view temperature readings, track trends, and analyze historical data.</p>
+    <p>With TempDash, users can easily connect to temperature sensors, receive live updates, and customize their dashboard to display the information that matters most to them. The application supports various data visualization options, including line charts, bar graphs, and heatmaps, making it easy to interpret temperature fluctuations over time.</p>
+    <p>Whether you're a hobbyist, researcher, or professional, TempDash offers a user-friendly platform to monitor and analyze temperature data effectively. Start using TempDash today to gain valuable insights into your temperature readings and make informed decisions based on real-time data.</p>
+
+    <canvas id="tempChart" width="600" height="250"></canvas>
+
+    <script>
+        const ctx = document.getElementById('tempChart');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+                datasets: [{
+                    label: 'Temperature (°C)',
+                    data: [22, 24, 26, 28, 27, 25],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    tension: 0.1,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Temperature Over Time'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+    <p id="count">0</p>
+    <script>
+        //count to a hundred in 1 second
+        let count = 0;
+        for (let i = 0; i <= 100; i++) {
+            setTimeout(() => {
+                countElement.textContent = count;
+                count++;
+            }, i * 10);
+        }
+        const countElement = document.getElementById('count');
+
+    </script>
+    
+   <dialog id="loader" open>
+        <div class="loader"></div>
+    </dialog>
+</body>
+</html>
