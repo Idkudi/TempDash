@@ -103,23 +103,26 @@ while True:
         #get last data from file
         with open('data', 'r') as datafile:
             lines=datafile.readlines()
-            tempL=[]
-            pressL=[]
-            humiL=[]
-            timeL=[]
-            for s in lines[-10:].strip():
-                s.split(";")
-                print(s)
-                timeL.append(s[0])
-                tempL.append(s[1])
-                pressL.append(s[2])
-                humiL.append(s[3])
+            tempL, pressL, humiL, timeL = [], [], [], []
+            try:
+                with open('data', 'r') as datafile:
+                    lines = datafile.readlines()
+                    for line in lines[-10:]:
+                        parts = line.strip().split(";")
+                        if len(parts) >= 4:
+                            timeL.append(parts[0])
+                            tempL.append(parts[1])
+                            humiL.append(parts[2])
+                            pressL.append(parts[3])
+            except OSError:
+                # File might not exist yet
+                pass
                 
         # Generate webpage incorporating the latest ESP-NOW data
-        website = website.replace("[tempList]",tempL )
-        website = website.replace("[pressureList]",pressL )
-        website = website.replace("[humidityList]",humiL )
-        website = website.replace("[timeList]", timeL)
+        website = website.replace("[tempList]",str(tempL ))
+        website = website.replace("[pressureList]",str(pressL ))
+        website = website.replace("[humidityList]",str(humiL ))
+        website = website.replace("[timeList]", str(timeL))
         website = website.replace("{temp}", messureTemp())
         # Send HTTP headers and body back to browser
         conn.send('HTTP/1.1 200 OK\r\n')
