@@ -65,9 +65,9 @@ def logData():
         now[1],  # Month
         now[0]   # Year
     )
-    temp,hum,pres=messureTemp()
-    data=[timestring,temp,hum,pres]
-    with open("data.json", "a", encoding="utf-8") as datei:
+    #temp,hum,pres=messureTemp()
+    data=timestring+';'.join(messureTemp())
+    with open("data", "a", encoding="utf-8") as datei:
         json.dump(data, datei, ensure_ascii=False, indent=4)
 
 # webserver setup
@@ -101,8 +101,26 @@ while True:
             website=f.read()
         
         print(messureTemp())
+        #get last data from file
+        with open('data', 'r') as datafile:
+            lines=datafile.readlines()
+            tempL=[]
+            pressL=[]
+            humiL=[]
+            timeL=[]
+            for s in lines[-10:].strip():
+                s.split(";")
+                print(s)
+                timeL.append(s[0])
+                tempL.append(s[1])
+                pressL.append(s[2])
+                humiL.append(s[3])
+                
         # Generate webpage incorporating the latest ESP-NOW data
-        website = website.replace("[tempList]", )
+        website = website.replace("[tempList]",tempL )
+        website = website.replace("[pressureList]",pressL )
+        website = website.replace("[humidityList]",humiL )
+        website = website.replace("[timeList]", timeL)
         website = website.replace("{temp}", messureTemp())
         # Send HTTP headers and body back to browser
         conn.send('HTTP/1.1 200 OK\r\n')
