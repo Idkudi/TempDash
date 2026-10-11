@@ -4,14 +4,24 @@ import json
 import asyncio
 import machine
 import time
+import socket
+
+
+SSID=""
+PASSWORD=""
+
 
 
 wlan = network.WLAN(network.STA_IF)
 wlan.active(True)
 
-
+# connect to wifi
+wlan.connect(SSID,PASSWORD)
+while not wlan.isconnected():
+    time.sleep(0.5)
+if wlan.isconnected(): print('WLAN connected')
 #get own mac address
-mymac=wlan.ipconfig('addr6')
+print(wlan.ipconfig('addr4'))
 
 #create message
 
@@ -20,14 +30,59 @@ e=espnow.ESPNow()
 e.active(True)
 print("ESPNow is active")
 
+# Variable to hold the latest received sensor data globally
+latest_data = {
+    "host": None,
+    "time": None,
+    "temp":None,
+}
+
 # temperature sensor
 def messureTemp():
-    return temp
+    return 25.0
 
-while True():
-    host, msg = e.recv()
-    if msg:             # msg == None if timeout in recv()
-        print(host, msg)
-        data=[host, time.localtime() json.load(msg)]
-        if msg == b'end':
-            break
+# webserver setup
+# 4. Setup Socket Server
+addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
+s = socket.socket()
+s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+s.bind(addr)
+s.listen(1)
+s.setblocking(False)
+print('listening on port 80')
+
+
+
+while True:
+    try:
+        host, msg = e.recv(100)
+        if msg:             # msg == None if timeout in recv()
+            print(host, msg)
+            data=[host, time.localtime(), json.load(msg)]
+            try:
+                decodms=msg.decode('utf-8')
+                data=[host, time.localtime(), json.load(decodms)]
+            except:
+                pass
+    except:pass
+    try:
+        conn, client_addr = s.accept()
+        try:
+            request = conn.recv(1024)
+            request_str = request.decode('utf-8')
+            
+                
+            # Generate webpage incorporating the latest ESP-NOW data
+            
+            # Send HTTP headers and body back to browser
+            conn.send('HTTP/1.1 200 OK\r\n')
+            conn.send('Content-Type: text/html\r\n')
+            conn.send('Connection: close\r\n\r\n')
+            conn.sendall('pe')
+        finally:
+            conn.close()
+    except OSError:
+        # Timeout exceptions are expected here when no web client is connecting
+        pass
+    except Exception as e_gen:
+        print("Web server error:", e_gen)
