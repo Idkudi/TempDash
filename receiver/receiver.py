@@ -48,9 +48,9 @@ latest_data = {
 # temperature sensor
 def messureTemp():
     bme = BME280.BME280(i2c=i2c)
-    temp = bme.temperature
-    hum = bme.humidity
-    pres = bme.pressure
+    temp = str(bme.temperature)[:-1]
+    hum = str(bme.humidity)[:-1]
+    pres = str(bme.pressure)[:-3]
     return temp,hum,pres
     #return random.randint(1,30)
 
@@ -66,7 +66,7 @@ def logData():
         now[0]   # Year
     )
     #temp,hum,pres=messureTemp()
-    data=timestring+';'.join(messureTemp())
+    data=timestring+';'+';'.join(messureTemp())+'\n'
     with open("data", "a", encoding="utf-8") as datei:
         datei.write(data)
 # webserver setup
@@ -78,9 +78,11 @@ s.bind(addr)
 s.listen(1)
 s.setblocking(False)
 print('listening on port 80')
-
+logData()
 
 while True:
+    #alogData()
+
     # try:
     #     host, msg = e.recv(100)
     #     if msg:             # msg == None if timeout in recv()
@@ -103,27 +105,34 @@ while True:
         #get last data from file
         with open('data', 'r') as datafile:
             lines=datafile.readlines()
-            tempL, pressL, humiL, timeL = [], [], [], []
-            try:
-                with open('data', 'r') as datafile:
-                    lines = datafile.readlines()
-                    for line in lines[-10:]:
-                        parts = line.strip().split(";")
-                        if len(parts) >= 4:
-                            timeL.append(parts[0])
-                            tempL.append(parts[1])
-                            humiL.append(parts[2])
-                            pressL.append(parts[3])
-            except OSError:
-                # File might not exist yet
-                pass
-                
+        tempL, pressL, humiL, timeL = [], [], [], []
+        parts=[]
+        try:
+            with open('data', 'r') as datafile:
+                lines = datafile.readlines()
+                for line in lines[-10:]:
+                    parts = line.strip().split(";")
+                    print(parts)
+                    timeL.append(parts[0])
+                    tempL.append(parts[1])
+                    humiL.append(parts[2])
+                    pressL.append(parts[3])
+        except OSError:
+            # File might not exist yet
+            pass
+        print(timeL,tempL,humiL,pressL)       
         # Generate webpage incorporating the latest ESP-NOW data
-        website = website.replace("[tempList]",str(tempL ))
-        website = website.replace("[pressureList]",str(pressL ))
-        website = website.replace("[humidityList]",str(humiL ))
+        website = website.replace("[tempList]",str(tempL))
+        print('1')
+        website = website.replace("[pressureList]",str(pressL))
+        print('1')
+
+        website = website.replace("[humidityList]",str(humiL))
+        print('1')
+
         website = website.replace("[timeList]", str(timeL))
-        website = website.replace("{temp}", messureTemp())
+        print('2')
+        website = website.replace("{temp}", str(messureTemp()))
         # Send HTTP headers and body back to browser
         conn.send('HTTP/1.1 200 OK\r\n')
         conn.send('Content-Type: text/html\r\n')
@@ -135,3 +144,4 @@ while True:
         pass
     except Exception as e_gen:
         print("Web server error:", e_gen)
+
