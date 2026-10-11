@@ -54,6 +54,22 @@ def messureTemp():
     return temp,hum,pres
     #return random.randint(1,30)
 
+def logData():
+    #get time
+    now = time.localtime()
+    
+    timestring = "{:02d}:{:02d}:{:02d}:{:02d}:{:04d}".format(
+        now[4],  # Minute
+        now[3],  # Hour
+        now[2],  # Day
+        now[1],  # Month
+        now[0]   # Year
+    )
+    temp,hum,pres=messureTemp()
+    data=[timestring,temp,hum,pres]
+    with open("data.json", "a", encoding="utf-8") as datei:
+        json.dump(data, datei, ensure_ascii=False, indent=4)
+
 # webserver setup
 # 4. Setup Socket Server
 addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
@@ -86,7 +102,8 @@ while True:
         
         print(messureTemp())
         # Generate webpage incorporating the latest ESP-NOW data
-        website = website.replace("{{temp}}", messureTemp())
+        website = website.replace("[tempList]", )
+        website = website.replace("{temp}", messureTemp())
         # Send HTTP headers and body back to browser
         conn.send('HTTP/1.1 200 OK\r\n')
         conn.send('Content-Type: text/html\r\n')
