@@ -29,7 +29,7 @@ while not wlan.isconnected():
     time.sleep(0.5)
 if wlan.isconnected(): print('WLAN connected')
 #get own mac address
-print(wlan.ipconfig('addr4'))
+print(wlan.ifconfig())
 
 #create message
 
@@ -68,8 +68,7 @@ def logData():
     #temp,hum,pres=messureTemp()
     data=timestring+';'.join(messureTemp())
     with open("data", "a", encoding="utf-8") as datei:
-        json.dump(data, datei, ensure_ascii=False, indent=4)
-
+        datei.write(data)
 # webserver setup
 # 4. Setup Socket Server
 addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
