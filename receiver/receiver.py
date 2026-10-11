@@ -5,11 +5,19 @@ import asyncio
 import machine
 import time
 import socket
+import random
+import utime
+from machine import Pin, I2C
+from time import sleep
+import BME280
 
 
 SSID=""
 PASSWORD=""
 
+
+#set up temp sensor
+i2c = I2C(scl=Pin(25), sda=Pin(26), freq=10000)
 
 
 wlan = network.WLAN(network.STA_IF)
@@ -39,7 +47,12 @@ latest_data = {
 
 # temperature sensor
 def messureTemp():
-    return 25.0
+    bme = BME280.BME280(i2c=i2c)
+    temp = bme.temperature
+    hum = bme.humidity
+    pres = bme.pressure
+    return temp,hum,pres
+    #return random.randint(1,30)
 
 # webserver setup
 # 4. Setup Socket Server
@@ -52,35 +65,34 @@ s.setblocking(False)
 print('listening on port 80')
 
 
-
 while True:
-    try:
-        host, msg = e.recv(100)
-        if msg:             # msg == None if timeout in recv()
-            print(host, msg)
-            data=[host, time.localtime(), json.load(msg)]
-            try:
-                decodms=msg.decode('utf-8')
-                data=[host, time.localtime(), json.load(decodms)]
-            except:
-                pass
-    except:pass
+    # try:
+    #     host, msg = e.recv(100)
+    #     if msg:             # msg == None if timeout in recv()
+    #         print(host, msg)
+    #         data=[host, time.localtime(), json.load(msg)]
+    #         try:
+    #             decodms=msg.decode('utf-8')
+    #             data=[host, time.localtime(), json.load(decodms)]
+    #         except:
+    #             pass
+    # except:pass
     try:
         conn, client_addr = s.accept()
-        try:
-            request = conn.recv(1024)
-            request_str = request.decode('utf-8')
-            
-                
-            # Generate webpage incorporating the latest ESP-NOW data
-            
-            # Send HTTP headers and body back to browser
-            conn.send('HTTP/1.1 200 OK\r\n')
-            conn.send('Content-Type: text/html\r\n')
-            conn.send('Connection: close\r\n\r\n')
-            conn.sendall('pe')
-        finally:
-            conn.close()
+        request = conn.recv(1024)
+        request_str = request.decode('utf-8')
+        with open('website.html', 'r') as f:
+            website=f.read()
+        
+        print(messureTemp())
+        # Generate webpage incorporating the latest ESP-NOW data
+        website = website.replace("{{temp}}", messureTemp())
+        # Send HTTP headers and body back to browser
+        conn.send('HTTP/1.1 200 OK\r\n')
+        conn.send('Content-Type: text/html\r\n')
+        conn.send('Connection: close\r\n\r\n')
+        conn.sendall(website)
+        conn.close()
     except OSError:
         # Timeout exceptions are expected here when no web client is connecting
         pass
