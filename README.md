@@ -1,1 +1,6 @@
-With this project my goal is to build a network of esp32 which comunicate through esp-now and transmit the current tempteratur and maybe humidity of their room. each should have their own battery and the ability to be charged via usb-c. Of course battery life can be a problem but I will try to use software to eliminate any consumption of access energy. In the end, my goal is to show all that data on a dashboard.
+With this project I built a webserver which shows the current temperatur,humidity and air pressure, as well as these messurements over the 10 last ours in a diagramm. all the data will be able to get downloaded via a button on the website.
+
+For the Diagramm I used Chart.js
+
+To set this up, you need a esp32 and a bme280 connected to pin 25 and 26
+you will need to modify the python file to add your wifi ssid and password. Drag the html and python file to the esp32 and then create a file called data. Then go to the ip of your esp32 and enjoy :)
