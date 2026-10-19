@@ -13,3 +13,5 @@ you will need to modify the python file to add your wifi ssid and password. Drag
 <h2>Preview in Browser</h2>
 <img src="safari preview.png" alt="Preview">
 
+<h2>How to set it up?</h2>
+First set up thonny IDE and install micropython on your esp32. After that connect the sensor as described on the wiring diagram(disconnect your esp32 for that). Then download all the files which are in the folder host and copy the bme280 library(used the one from this tutorial:'https://randomnerdtutorials.com/micropython-bme280-esp32-esp8266/')(this is the github repo: 'https://github.com/RuiSantosdotme/ESP-MicroPython/blob/master/code/WiFi/HTTP_Client_IFTTT_BME280/BME280.py') to the esp32 and save it as 'BME280.py'. Also copy the other files from the host folder to the esp32. Then create a file named 'data'. After that you will need to add the SSID and Password of your router in main.py. Now you can start the programm. When you start the programm the esp 32 will output his ip address. You will need to use this ip to access the website. It's important that your device and the esp32 are in the same network. 
