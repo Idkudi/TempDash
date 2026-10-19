@@ -3,16 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Temp Dash</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
             padding: 20px;
-            background-color: #f4f4f4;
+            background-color: #121212;
+            
         }
-        h1 {
+        h1,
+        h2{
             color: #af4343;
             
         }
@@ -65,7 +67,10 @@
     <h1>TempDash</h1>
     <hr class="stripd">
     <p>The most important changes in Temperatur, Humidity and Air Pressure of your home are shown here</p>
-    <h2>Current temp {temp}</h2>
+    <h2>Current stats:</h2>
+    <h2>{temp}</h2>
+    <h2>{humi}</h2>
+    <h2>{press}</h2>
     <canvas id="tempChart" width="600" height="250"></canvas>
 
     <script>
@@ -85,7 +90,7 @@
                     yAxisID: 'y-temp',
                 },
                 {
-                    label: 'Air Pressure',
+                    label: 'Humidity (%)',
                     data: [pressureList],
                     borderColor: 'rgb(54, 162, 235)',
                     backgroundColor: 'rgba(54, 162, 235, 0.2)',
@@ -94,7 +99,7 @@
                     yAxisID:'y-pressure'
                 },
                 {
-                        label: 'Luftdruck (hPa)',
+                        label: 'Air Pressure (hPa)',
                         data: [humidityList],
                         borderColor: 'rgb(75, 192, 192)',
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
@@ -134,7 +139,7 @@
             }
         });
     </script>
-    <p id="count">0</p>
+<!--    <p id="count">0</p>
     <script>
         //count to a hundred in 1 second
         let count = 0;
@@ -148,8 +153,9 @@
 
     </script>
     
-   <dialog id="loader" open>
-        <div class="loader"></div>
-    </dialog>
+    <dialog id="loader" open>
+         <div class="loader"></div>
+     </dialog> -->
 </body>
 </html>
+

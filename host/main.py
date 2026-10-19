@@ -135,7 +135,13 @@ async def webserver():
 
             website = website.replace("[timeList]", str(timeL))
             print('2')
-            website = website.replace("{temp}", str(messureTemp()))
+            tt=[]
+            for z in messureTemp():
+                tt.append(z)
+            website = website.replace("{temp}", str(tt[0])+'C°')
+            website = website.replace("{humi}", str(tt[1])+'%')
+            website = website.replace("{press}", str(tt[2])+'hPa')
+            
             # Send HTTP headers and body back to browser
             conn.send('HTTP/1.1 200 OK\r\n')
             conn.send('Content-Type: text/html\r\n')
