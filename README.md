@@ -11,3 +11,5 @@ you will need to modify the python file to add your wifi ssid and password. Drag
 <img src="Wiring-Diagramm.jpeg" alt="Wiring Diagramm">
 
 <h2>Preview in Browser</h2>
+<img src="safari preview" alt="Preview">
+
